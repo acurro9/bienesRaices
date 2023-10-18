@@ -19,7 +19,7 @@
     <?php } else if(intval($resultado)===3){ ?>
         <p class="alerta exito">Anuncio borrado correctamente</p>
     <?php } else if(intval($resultado)===4){ ?>
-        <p class="alerta exito">Vendedor añadido correctamente</p>
+        <p class="alerta exito">No se puedo borrar el anuncio</p>
     <?php } ?>
 
     <table >
