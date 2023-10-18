@@ -11,7 +11,7 @@
 ?>
 <link rel="stylesheet" href="./styleTabla.css">
 <main class="contenedor seccion">
-    <h1>Administrador</h1>
+    <h1>Administrador Propiedades</h1>
     <?php if (intval($resultado)===1){ ?>
         <p class="alerta exito">Anuncio creado correctamente</p>
     <?php } else if(intval($resultado)===2){ ?>
@@ -60,7 +60,7 @@
         
 
     <a href="/admin/propiedades/crear.php" class="boton boton-verde crear">Nueva propiedad</a>
-    <a href="/admin/vendedores/crear.php" class="boton boton-verde crear">Nuevo Vendedor</a>
+    <a href="/admin/indexVend.php" class="boton boton-verde crear">Vendedores</a>
     
 </main>
 

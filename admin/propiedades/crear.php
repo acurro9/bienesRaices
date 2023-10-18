@@ -78,7 +78,7 @@
             //echo $query;
             $resultado=mysqli_query($db,$query);
             if ($resultado) {
-                header('Location:/admin?resultado=1');
+                header('Location:/admin/index-php/?resultado=1');
                 move_uploaded_file($imagen['tmp_name'], $carpetaImagenes.$nombreImagen);
             }
 
@@ -92,7 +92,7 @@
     //echo "</pre>";
 ?>
 <main class="contenedor section">
-    <h1>Crear</h1>
+    <h1>Crear Propiedades</h1>
     <?php foreach($errores as $error){ ?>
         <div class="alerta error">
             <?php echo $error; ?>

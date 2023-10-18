@@ -6,5 +6,5 @@
 
     $borrarCons="DELETE from propiedades where id=$id;";
     $borrar=mysqli_query($db,$borrarCons);
-    header('Location:/admin?resultado=3');
+    header('Location:/admin/index-php/?resultado=3');
 ?>

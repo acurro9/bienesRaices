@@ -32,14 +32,14 @@
     echo $query;
             $resultado=mysqli_query($db,$query);
             if ($resultado) {
-                header('Location:/admin?resultado=2');
+                header('Location:/admin/index-php/?resultado=2');
             }
 
     }
 ?>
 
 <main class="contenedor section">
-    <h1>Actualizar</h1>
+    <h1>Actualizar Propiedades</h1>
     <form class="formulario" method="POST" action="/admin/propiedades/actualizar.php/?id=<?php echo $id?>" enctype="multipart/form-data">
 
         <fieldset>
