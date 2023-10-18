@@ -1,0 +1,27 @@
+table{
+    border: 1px solid black;
+    text-align: center;
+}
+
+td{
+    border: 1px solid black;
+    width: 250px;
+    max-height: 250px;
+}
+table img{
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+}
+table a{
+    width: 225px;
+}
+.borrar{
+    margin-top: 25px;
+}
+.crear{
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 700px;
+    margin-left: 250px;
+}
