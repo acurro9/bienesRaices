@@ -42,7 +42,7 @@
                     
                     <td><?php echo $fila['id'] ?></td>
                     <td><?php echo $fila['titulo'] ?></td>
-                    <td><img src="../imagenes/<?php echo $fila['imagen'] ?>" alt=""></td>
+                    <td><img src="../imagenes/<?php echo $fila['imagen'] ?>" alt="" class="imagen-tabla"></td>
                     <td><?php echo $fila['precio'] ?></td>
                     <td>
                         <a href="/admin/propiedades/actualizar.php/?id=<?php echo $fila['id']?>" class="boton-amarillo-block">Actualizar propiedad</a>
