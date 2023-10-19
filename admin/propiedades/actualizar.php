@@ -24,7 +24,7 @@
                 $descripcion=$fila[6];
             
         }
-    
+        $img="";
         if ($_SERVER['REQUEST_METHOD']==="POST"){
             $titulo=mysqli_real_escape_string($db, $_POST['titulo']);
             $precio=mysqli_real_escape_string($db,$_POST['precio']);
@@ -32,14 +32,25 @@
             $habitaciones= mysqli_real_escape_string($db,$_POST['habitaciones']);
             $wc=mysqli_real_escape_string($db,$_POST['wc']);
             $estacionamiento=mysqli_real_escape_string($db,$_POST['estacionamiento']);
-
+            $img=$_FILES['img'];
             
+            //Se borra la imagen vieja y se sube la nueva
+            if($img!=""){
+                $carpetaImagenes='../../imagenes/';
+                $ruta='../../imagenes/'.$imagen;
+                unlink($ruta);
+                $nombreImagen=md5(uniqid(rand(),true)).".jpg";
+                move_uploaded_file($img['tmp_name'], $carpetaImagenes.$nombreImagen);
+            } else{
+                $nombreImagen=$imagen;
+            }
             
             $query="UPDATE propiedades set titulo='$titulo', precio=$precio, descripcion='$descripcion', 
-                        habitaciones=$habitaciones, wc=$wc, estacionamiento='$estacionamiento', imagen=$imagen where id=$id;";
+                        habitaciones=$habitaciones, wc=$wc, estacionamiento='$estacionamiento', imagen='$nombreImagen' where id=$id;";
                 $resultado=mysqli_query($db,$query);
                 if ($resultado) {
                     header('Location:/admin?resultado=2');
+                    
                 }
     
         }
@@ -58,8 +69,9 @@
                     <label for="precio">Precio: </label>
                     <input type="number" id="precio" placeholder="Precio propiedad" name="precio" value="<?php echo $precio;  ?>">
                     
-                    <label for="imagen">Imagen: </label>
+                    <label for="img">Imagen: </label>
                     <img src="../../../imagenes/<?php echo $imagen ?>" alt="">
+                    <input type="file" id="img" name="img" accept="image/jpeg, image/png">
         
                 </fieldset>
                 <fieldset>
