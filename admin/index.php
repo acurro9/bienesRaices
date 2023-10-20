@@ -8,6 +8,30 @@
     $consult="SELECT * FROM propiedades;";
     $datos=mysqli_query($db,$consult);
 
+    if ($_SERVER['REQUEST_METHOD']==='POST'){
+        $id=$_POST['id'];
+        echo $id;
+        //validamos que el id sea un entero
+        $id=filter_var($id, FILTER_VALIDATE_INT);
+        if ($id){
+            //eliminar la imagen
+            $query="SELECT imagen FROM propiedades WHERE id=${id}";
+            $resultado= mysqli_query($db,$query);
+            $fila=mysqli_fetch_assoc($resultado);
+          
+            unlink('../imagenes/'.$fila['imagen']);
+  
+            //eliminar la propiedad
+            $query="DELETE FROM propiedades  WHERE id=${id}";
+            $resultado=mysqli_query($db,$query);
+            //pasamos un resultado para poder mostrar un mensaje.
+            if ($resultado){
+                header('location: /admin?resultado=3');
+            }
+        }
+
+}
+
 ?>
 <link rel="stylesheet" href="./styleTabla.css">
 <main class="contenedor seccion">
@@ -46,7 +70,10 @@
                     <td><?php echo $fila['precio'] ?></td>
                     <td>
                         <a href="/admin/propiedades/actualizar.php/?id=<?php echo $fila['id']?>" class="boton-amarillo-block">Actualizar propiedad</a>
-                        <a href="/admin/propiedades/borrar.php/?id=<?php echo $fila['id']?>" class="boton-rojo-block">Borrar propiedad</a>
+                        <form method="post">
+                            <input type="hidden" name="id" value=<?php echo $fila['id'];?>>
+                            <input type="submit" class="boton-rojo-block" value="Eliminar">
+                        </form>
                     </td>
                 </tr>
             <?php } ?>
