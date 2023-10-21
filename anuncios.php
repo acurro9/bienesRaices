@@ -23,7 +23,7 @@
         $pagina = $_GET["pagina"];
     }
     //Se coge el total de páginas redondeando hacia arriba
-    $totalPaginas=round($cantPropiedades/$ppp);
+    $totalPaginas=ceil($cantPropiedades/$ppp);
     //Se calculan el limit y el offset
     $offset=($pagina-1)*$ppp;
     $limit= $ppp;
