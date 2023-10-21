@@ -10,7 +10,7 @@
 
     if ($_SERVER['REQUEST_METHOD']==='POST'){
         $id=$_POST['id'];
-        echo $id;
+
         //validamos que el id sea un entero
         $id=filter_var($id, FILTER_VALIDATE_INT);
         if ($id){
@@ -42,8 +42,6 @@
         <p class="alerta exito">Anuncio actualizado correctamente</p>
     <?php } else if(intval($resultado)===3){ ?>
         <p class="alerta exito">Anuncio borrado correctamente</p>
-    <?php } else if(intval($resultado)===4){ ?>
-        <p class="alerta exito">No se pudo borrar el anuncio</p>
     <?php } ?>
 
     <a href="/admin/propiedades/crear.php" class="boton boton-verde crear">Nueva propiedad</a>
@@ -72,12 +70,13 @@
                         <a href="/admin/propiedades/actualizar.php/?id=<?php echo $fila['id']?>" class="boton-amarillo-block">Actualizar propiedad</a>
                         <form method="post">
                             <input type="hidden" name="id" value=<?php echo $fila['id'];?>>
-                            <input type="submit" class="boton-rojo-block" value="Eliminar">
+                            <input type="submit" class="boton-rojo-block" onclick="validarEliminado()" value="Eliminar">
                         </form>
                     </td>
                 </tr>
             <?php } ?>
         </tbody>       
-    </table>    
+    </table>
 </main>
+<script src="./index.js"></script>    
 
