@@ -1,7 +1,7 @@
 <?php 
     $resultado=$_GET['resultado'] ?? null;
     require '../includes/funciones.php';
-    incluirTemplate('header', true);
+    incluirTemplate('header');
 
     require '../includes/config/database.php';
     $db=conectarDB();
@@ -9,6 +9,11 @@
     $datos=mysqli_query($db,$consult);
 
 ?>
+    <script type="text/javascript">
+        function confirmEliminado() {
+            return window.confirm( '¿Seguro que quiere borrar la propiedad?' );
+        }
+    </script>
 
 <main class="contenedor seccion">
     <h1>Administrador Vendedores</h1>
@@ -46,7 +51,10 @@
                     <td><?php echo $fila['telefono'] ?></td> 
                     <td>
                         <a href="/admin/vendedores/actualizar.php/?id=<?php echo $fila['id']?>" class="boton-amarillo-block">Actualizar vendedor</a>
-                        <a href="/admin/vendedores/borrar.php/?id=<?php echo $fila['id']?>" class="boton-rojo-block">Borrar vendedor</a>
+                        <form action="<?php $_SERVER[ 'PHP_SELF' ]; ?>" method="post" onsubmit="return confirmEliminado()">
+                            <input type="hidden" name="id" value=<?php echo $fila['id'];?>>
+                            <input type="submit" class="boton-rojo-block" value="Eliminar">
+                        </form>
                     </td>
                 </tr>
             <?php } ?>
