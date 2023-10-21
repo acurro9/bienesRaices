@@ -7,6 +7,23 @@
     $db=conectarDB();
     $consult="SELECT * FROM vendedores;";
     $datos=mysqli_query($db,$consult);
+    if ($_SERVER['REQUEST_METHOD']==='POST'){
+        $id=$_POST['id'];
+
+        //validamos que el id sea un entero
+        $id=filter_var($id, FILTER_VALIDATE_INT);
+        if ($id){          
+            //eliminar la propiedad
+            $query="DELETE FROM vendedores WHERE id=${id}";
+            $resultado=mysqli_query($db,$query);
+            //pasamos un resultado para poder mostrar un mensaje.
+            if ($resultado){
+                header('location: /admin/indexVend.php/?resultado=3');
+            } else{
+                header('location: /admin/indexVend.php/?resultado=4');
+            }
+        }
+}
 
 ?>
     <script type="text/javascript">

@@ -51,7 +51,7 @@
     <?php } ?>
 
     <a href="/admin/propiedades/crear.php" class="boton boton-verde crear">Nueva propiedad</a>
-    <a href="/admin/vendedores/crear.php" class="boton boton-verde crear">Nuevo Vendedor</a>
+    <a href="/admin/indexVend.php" class="boton boton-verde crear">Vendedores</a>
 
     <table class="propiedades">
         <thead>
