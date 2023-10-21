@@ -83,6 +83,5 @@
             <?php } ?>
         </tbody>       
     </table>
-</main>
-<script src="./index.js"></script>    
+</main>   
 
