@@ -68,8 +68,9 @@
             <label for="precio">Precio: </label>
             <input type="number" id="precio" placeholder="Precio propiedad" name="precio" value="<?php echo $precio;  ?>">
             
-            <label for="imagen">Imagen: </label>
-            <img src="../../../imagenes/<?php echo $imagen ?>" alt="">
+            <label for="img">Imagen: </label>
+            <img src="../../../imagenes/<?php echo $imagen ?>" alt="" style="max-width: 360px;">
+            <input type="file" id="img" name="img" accept="image/jpeg, image/png">
 
         </fieldset>
         <fieldset>
