@@ -31,50 +31,134 @@
     $consult="SELECT * FROM propiedades limit $limit offset $offset;";
     $datos=mysqli_query($db,$consult);
 
+        $nombre="";
+        $precioMin="";
+        $precioMax="";
+        $descripcion="";
+        $habitaciones="";
+        $wc="";
+        $estacionamiento="";
+
     if ($_SERVER['REQUEST_METHOD']==="POST"){
 
-        $busq=mysqli_real_escape_string($db, $_POST['nombre']);
+        $nombre=mysqli_real_escape_string($db, $_POST['nombre']);
+        $precioMin=mysqli_real_escape_string($db,$_POST['preciomin']);
+        $precioMax=mysqli_real_escape_string($db,$_POST['preciomax']);
+        $descripcion=mysqli_real_escape_string($db,$_POST['descripcion']);
+        $habitaciones= mysqli_real_escape_string($db,$_POST['habitaciones']);
+        $wc=mysqli_real_escape_string($db,$_POST['wc']);
+        $estacionamiento=mysqli_real_escape_string($db,$_POST['estacionamiento']);
+
         //Así se muestran todas las propiedades que contengan esa palabra en una sola página
-        // $busqueda="SELECT * from propiedades where titulo like '%$busq%';";
+        // $busqueda="SELECT * from propiedades where titulo like '%$nombre%';";
         // $datos=mysqli_query($db,$busqueda);
         // $totalPaginas=1;
         
-        //Así se muestran la cantidad de propiedades ya establecida
-        $busqueda="SELECT * from propiedades where titulo like '%$busq%' limit $limit offset $offset;";
+        //Así se muestran la cantidad de propiedades ya establecida (6)
+        // $busqueda="SELECT * from propiedades where titulo like '%$nombre%' limit $limit offset $offset;";
+        // $datos=mysqli_query($db,$busqueda);
+
+        if(!$nombre){
+            $nombre='%';
+        }
+        if(!$precioMin){
+            $precioMin=0;
+        }
+        if(!$precioMax){
+            $precioMax=1000000000000000000;
+        }
+        if(!$descripcion){
+            $descripcion='%';
+        }
+        if(!$habitaciones){
+            $habitaciones=0;
+        }
+        if(!$wc){
+            $wc=0;
+        }
+        if(!$estacionamiento){
+            $estacionamiento=0;
+        }
+        $busqueda="SELECT * from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento limit $limit offset $offset;";
         $datos=mysqli_query($db,$busqueda);
+
+        $busqCantidad="SELECT count(*) as contador2 from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento limit $limit offset $offset;";
+        $datos2=mysqli_query($db,$busqCantidad);
+        if($datos && $datos2){
+            $data=mysqli_fetch_assoc($datos2);
+            $cantPropiedades=$data['contador2'];
+            $totalPaginas=ceil($cantPropiedades/$ppp);
+        }
     }
-    
+    function guardarValor($variable){
+        if ($variable=='%' || $variable==0 || $variable==1000000000000000000){
+            return false;
+        } else{
+            return true;
+        }
+    }
     ?> 
     <link rel="stylesheet" href="build/css/app.css">
 
+    <div class="prop">
+         
+        <!--Para la busqueda-->
+        <form action="anuncios.php" class="busqueda" method="POST">
+            <fieldset class="busqueda">
 
-    <!--Se le pide al usuario el número de productos por página-->
-    <form class="paginado">
-        <fieldset>
-            <legend style="color: white;">Productos por página: </legend>
-            <select name="anuncios">
-                <option <?php echo $ppp==3?'selected':''; ?> value=3>3</option>
-                <option <?php echo $ppp==6?'selected':''; ?> value=6>6</option>
-                <option <?php echo $ppp==10?'selected':''; ?> value=10>10</option>
-                <option <?php echo $ppp==20?'selected':''; ?> value=20>20</option>
-            </select>
-            <input type="submit" value="Cambiar" class="boton boton-verde">
-        </fieldset>
-    </form>
-    <!--Para el botón de buscar-->
-    <form action="anuncios.php" class="paginado" method="POST">
-        <fieldset>
-            <label style="color: white;" for="nombre">Buscar:</label>
-            <input type="text" id="nombre" name="nombre" placeholder="Buscar Propiedad">
-            <input type="submit" value="Buscar Propiedad" class="boton-verde">
-        </fieldset>
-    </form>
-    <!--En caso de buscar aparece por pantalla lo introducido para buscar-->
-    <?php
-        if (isset($busq)){
-            echo '<form class="paginado"><fieldset><h1>Buscando por: '.$busq.'<a href="anuncios.php" class="boton-verde">X</a></fieldset></form>';
-        }
-    ?>
+                <div class="buscar">
+                    <label style="color: white;" for="nombre">Buscar:</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Titulo" value="<?php echo guardarValor($nombre)?$nombre:'';?>">
+                </div>
+
+                <div class="buscar">
+                    <label for="precio">Precio: </label>
+                    <div class="diferenciaPrecio">
+                        <input type="number" id="preciomin" placeholder="Min. Precio" name="preciomin" value="<?php echo guardarValor($precioMin)?$precioMin:'';?>">
+                        <input type="number" id="preciomax" placeholder="Max. Precio" name="preciomax" value="<?php echo guardarValor($precioMax)?$precioMax:'';?>">
+                    </div>
+                </div>
+                <div class="buscar">
+                    <label for="habitaciones">Habitaciones: </label>
+                    <input type="number" id="habitaciones" placeholder="Min. Habitaciones" name="habitaciones" value="<?php echo guardarValor($habitaciones)?$habitaciones:'';?>">
+                </div>
+
+                <div class="buscar">
+                    <label for="wc">WC: </label>
+                    <input type="number" id="wc" placeholder="Min. WC" name="wc" value="<?php echo guardarValor($wc)?$wc:'';?>">
+                </div>
+
+                <div class="buscar">
+                    <label for="estacionamiento">Estacionamiento: </label>
+                    <input type="number" id="estacionamiento" placeholder="Min. Estacionamientos" name="estacionamiento" value="<?php echo guardarValor($estacionamiento)?$estacionamiento:'';?>">
+                </div>
+
+                <div class="">
+                    <label for="descripcion">Descripción: </label>
+                    <input type="text" id="descripcion" name="descripcion" placeholder="Descripción" value="<?php echo guardarValor($descripcion)?$descripcion:'';?>">
+                </div>       
+
+
+                <input type="submit" value="Buscar Propiedad" class="boton-buscar">
+            </fieldset>
+        </form>
+
+        <!--Se le pide al usuario el número de productos por página-->
+        <form class="paginado">
+            <fieldset>
+                <legend style="color: white;">Productos por página: </legend>
+                <select name="anuncios">
+                    <option <?php echo $ppp==3?'selected':''; ?> value=3>3</option>
+                    <option <?php echo $ppp==6?'selected':''; ?> value=6>6</option>
+                    <option <?php echo $ppp==10?'selected':''; ?> value=10>10</option>
+                    <option <?php echo $ppp==20?'selected':''; ?> value=20>20</option>
+                </select>
+                <input type="submit" value="Cambiar" class="boton boton-verde">
+            </fieldset>
+        </form>
+
+    </div>
+
     <main class="contenedor seccion">
 
     <?php

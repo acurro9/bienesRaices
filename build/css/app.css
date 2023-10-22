@@ -13,3 +13,31 @@
     justify-content: space-around;
     max-width: 250px;
 }
+.prop{
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+    margin: 0 30px;
+}
+.busqueda{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 95%;
+}
+.busqueda label{
+    color: white;
+}
+.buscar{
+    margin: 0 10px;
+}
+.diferenciaPrecio{
+    display: flex;
+    flex-direction: row;
+}
+.boton-buscar{
+    height: 50px;
+    color: white;
+    background-color: #71B100;
+    border: none;
+}
