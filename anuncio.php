@@ -1,47 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienes Raices</title>
-    <link rel="stylesheet" href="build/css/app.css">
-</head>
 <body>
-    
 <?php
-    include './includes/funciones.php';
+    $id=$_GET['id'];
+    require './includes/funciones.php';
     incluirTemplate('header');
-    ?> 
+    require './includes/config/database.php';
+
+    $id= filter_var($id, FILTER_VALIDATE_INT);
+    if (!$id){
+        header('Location: /admin');
+    } else{
+        
+        $db=conectarDB();
+        $consult="SELECT imagen, titulo, precio, habitaciones, wc, estacionamiento, descripcion FROM propiedades where id=$id;";
+        $datos=mysqli_query($db,$consult);
+    
+        while ($fila=mysqli_fetch_row($datos)){
+                $imagen=$fila[0]; 
+                $titulo=$fila[1];
+                $precio=$fila[2];
+                $habitaciones=$fila[3];
+                $wc=$fila[4];
+                $estacionamiento=$fila[5];
+                $descripcion=$fila[6];
+            
+        }
+    }
+?> 
 
     <main class="contenedor seccion contenido-centrado">
-        <h1>Casa en Venta frente al bosque</h1>
+        <h1><?php echo $titulo ?></h1>
 
         <picture>
-            <source srcset="build/img/destacada.webp" type="image/webp">
-            <source srcset="build/img/destacada.jpg" type="image/jpeg">
-            <img loading="lazy" src="build/img/destacada.jpg" alt="imagen de la propiedad">
+            <source srcset="/imagenes/<?php echo $imagen; ?>" type="image/jpeg">
+            <img loading="lazy" src="/imagenes/<?php echo $imagen; ?>"alt="imagen de la propiedad">
         </picture>
 
         <div class="resumen-propiedad">
-            <p class="precio">$3,000,000</p>
+            <p class="precio">$<?php echo $precio ?></p>
             <ul class="iconos-caracteristicas">
                 <li>
-                    <img class="icono" loading="lazy" src="build/img/icono_wc.svg" alt="icono wc">
-                    <p>3</p>
+                    <img class="icono" loading="lazy" src="/build/img/icono_wc.svg" alt="icono wc">
+                    <p><?php echo $wc ?></p>
                 </li>
                 <li>
-                    <img class="icono" loading="lazy" src="build/img/icono_estacionamiento.svg" alt="icono estacionamiento">
-                    <p>3</p>
+                    <img class="icono" loading="lazy" src="/build/img/icono_estacionamiento.svg" alt="icono estacionamiento">
+                    <p><?php echo $estacionamiento ?></p>
                 </li>
                 <li>
-                    <img class="icono"  loading="lazy" src="build/img/icono_dormitorio.svg" alt="icono habitaciones">
-                    <p>4</p>
+                    <img class="icono"  loading="lazy" src="/build/img/icono_dormitorio.svg" alt="icono habitaciones">
+                    <p><?php echo $habitaciones ?></p>
                 </li>
             </ul>
 
-            <p>Proin consequat viverra sapien, malesuada tempor tortor feugiat vitae. In dictum felis et nunc aliquet molestie. Proin tristique commodo felis, sed auctor elit auctor pulvinar. Nunc porta, nibh quis convallis sollicitudin, arcu nisl semper mi, vitae sagittis lorem dolor non risus. Vivamus accumsan maximus est, eu mollis mi. Proin id nisl vel odio semper hendrerit. Nunc porta in justo finibus tempor. Suspendisse lobortis dolor quis elit suscipit molestie. Sed condimentum, erat at tempor finibus, urna nisi fermentum est, a dignissim nisi libero vel est. Donec et imperdiet augue. Curabitur malesuada sodales congue. Suspendisse potenti. Ut sit amet convallis nisi.</p>
-
-            <p>Aliquam lectus magna, luctus vel gravida nec, iaculis ut augue. Praesent ac enim lorem. Quisque ac dignissim sem, non condimentum orci. Morbi a iaculis neque, ac euismod felis. Fusce augue quam, fermentum sed turpis nec, hendrerit dapibus ante. Cras mattis laoreet nibh, quis tincidunt odio fermentum vel. Nulla facilisi.</p>
+            <p><?php echo $descripcion ?>.</p>
         </div>
     </main>
     <?php 

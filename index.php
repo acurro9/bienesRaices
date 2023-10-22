@@ -11,6 +11,10 @@
     <?php
     include './includes/funciones.php';
     incluirTemplate('header', true);
+    require './includes/config/database.php';
+    $db=conectarDB();
+    $consult="SELECT * FROM propiedades limit 3;";
+    $datos=mysqli_query($db,$consult);
     ?> 
 
     <main class="contenedor seccion">
@@ -36,108 +40,44 @@
     </main>
 
     <section class="seccion contenedor">
-        <h2>Casas y Depas en Venta</h2>
 
-        <div class="contenedor-anuncios">
-            <div class="anuncio">
+    <div class="contenedor-anuncios"> <?php
+        while ($fila=mysqli_fetch_assoc($datos)){?>
+
+            <div class="anuncio" >
                 <picture>
-                    <source srcset="build/img/anuncio1.webp" type="image/webp">
-                    <source srcset="build/img/anuncio1.jpg" type="image/jpeg">
-                    <img loading="lazy" src="build/img/anuncio1.jpg" alt="anuncio">
+                    <source srcset="./imagenes/<?php echo $fila['imagen']; ?>" type="image/jpeg">
+                    <img loading="lazy" src="./imagenes/<?php echo $fila['imagen']; ?>" alt="anuncio">
                 </picture>
 
                 <div class="contenido-anuncio">
-                    <h3>Casa de Lujo en el Lago</h3>
-                    <p>Casa en el lago con excelente vista, acabados de lujo a un excelente precio</p>
-                    <p class="precio">$3,0000,000</p>
+                    <h2><?php echo $fila['titulo'] ?></h2>
+                    <div class="desc">
+                        <p class="desc"><?php echo $fila['descripcion'] ?></p>
+                    </div>
+                    <p class="precio">$<?php echo $fila['precio'] ?></p>
 
                     <ul class="iconos-caracteristicas">
                         <li>
                             <img class="icono" loading="lazy" src="build/img/icono_wc.svg" alt="icono wc">
-                            <p>3</p>
+                            <p><?php echo $fila['wc'] ?></p>
                         </li>
                         <li>
                             <img class="icono" loading="lazy" src="build/img/icono_estacionamiento.svg" alt="icono estacionamiento">
-                            <p>3</p>
+                            <p><?php echo $fila['estacionamiento'] ?></p>
                         </li>
                         <li>
                             <img class="icono" loading="lazy" src="build/img/icono_dormitorio.svg" alt="icono habitaciones">
-                            <p>4</p>
+                            <p><?php echo $fila['habitaciones'] ?></p>
                         </li>
                     </ul>
 
-                    <a href="anuncio.php" class="boton-amarillo-block">
+                    <a href="anuncio.php/?id=<?php echo $fila['id']?>" class="boton-amarillo-block">
                         Ver Propiedad
                     </a>
                 </div><!--.contenido-anuncio-->
             </div><!--anuncio-->
-
-            <div class="anuncio">
-                <picture>
-                    <source srcset="build/img/anuncio2.webp" type="image/webp">
-                    <source srcset="build/img/anuncio2.jpg" type="image/jpeg">
-                    <img loading="lazy" src="build/img/anuncio2.jpg" alt="anuncio">
-                </picture>
-
-                <div class="contenido-anuncio">
-                    <h3>Casa terminados de lujo</h3>
-                    <p>Casa en el lago con excelente vista, acabados de lujo a un excelente precio</p>
-                    <p class="precio">$3,0000,000</p>
-
-                    <ul class="iconos-caracteristicas">
-                        <li>
-                            <img class="icono" loading="lazy" src="build/img/icono_wc.svg" alt="icono wc">
-                            <p>3</p>
-                        </li>
-                        <li>
-                            <img class="icono" loading="lazy" src="build/img/icono_estacionamiento.svg" alt="icono estacionamiento">
-                            <p>3</p>
-                        </li>
-                        <li>
-                            <img class="icono" loading="lazy" src="build/img/icono_dormitorio.svg" alt="icono habitaciones">
-                            <p>4</p>
-                        </li>
-                    </ul>
-
-                    <a href="anuncio.php" class="boton-amarillo-block">
-                        Ver Propiedad
-                    </a>
-                </div><!--.contenido-anuncio-->
-            </div><!--anuncio-->
-
-            <div class="anuncio">
-                <picture>
-                    <source srcset="build/img/anuncio3.webp" type="image/webp">
-                    <source srcset="build/img/anuncio3.jpg" type="image/jpeg">
-                    <img loading="lazy" src="build/img/anuncio3.jpg" alt="anuncio">
-                </picture>
-
-                <div class="contenido-anuncio">
-                    <h3>Casa con alberca</h3>
-                    <p>Casa en el lago con excelente vista, acabados de lujo a un excelente precio</p>
-                    <p class="precio">$3,0000,000</p>
-
-                    <ul class="iconos-caracteristicas">
-                        <li>
-                            <img class="icono" loading="lazy" src="build/img/icono_wc.svg" alt="icono wc">
-                            <p>3</p>
-                        </li>
-                        <li>
-                            <img class="icono" loading="lazy" src="build/img/icono_estacionamiento.svg" alt="icono estacionamiento">
-                            <p>3</p>
-                        </li>
-                        <li>
-                            <img class="icono" loading="lazy" src="build/img/icono_dormitorio.svg" alt="icono habitaciones">
-                            <p>4</p>
-                        </li>
-                    </ul>
-
-                    <a href="anuncio.php" class="boton-amarillo-block">
-                        Ver Propiedad
-                    </a>
-                </div><!--.contenido-anuncio-->
-            </div><!--anuncio-->
-
+            <?php } ?>
         </div> <!--.contenedor-anuncios-->
 
         <div class="alinear-derecha">
