@@ -3,6 +3,7 @@
 .paginado{
     display: flex;
     justify-content: end;
+    align-items: end;
 }
 .pagComplete{
     margin: auto;

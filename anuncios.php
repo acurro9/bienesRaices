@@ -31,14 +31,27 @@
     $consult="SELECT * FROM propiedades limit $limit offset $offset;";
     $datos=mysqli_query($db,$consult);
 
+    if ($_SERVER['REQUEST_METHOD']==="POST"){
+
+        $busq=mysqli_real_escape_string($db, $_POST['nombre']);
+        //Así se muestran todas las propiedades que contengan esa palabra en una sola página
+        // $busqueda="SELECT * from propiedades where titulo like '%$busq%';";
+        // $datos=mysqli_query($db,$busqueda);
+        // $totalPaginas=1;
+        
+        //Así se muestran la cantidad de propiedades ya establecida
+        $busqueda="SELECT * from propiedades where titulo like '%$busq%' limit $limit offset $offset;";
+        $datos=mysqli_query($db,$busqueda);
+    }
+    
     ?> 
     <link rel="stylesheet" href="build/css/app.css">
 
 
     <!--Se le pide al usuario el número de productos por página-->
-    <form action="" class="paginado">
+    <form class="paginado">
         <fieldset>
-            <legend>Productos por página: </legend>
+            <legend style="color: white;">Productos por página: </legend>
             <select name="anuncios">
                 <option <?php echo $ppp==3?'selected':''; ?> value=3>3</option>
                 <option <?php echo $ppp==6?'selected':''; ?> value=6>6</option>
@@ -48,7 +61,20 @@
             <input type="submit" value="Cambiar" class="boton boton-verde">
         </fieldset>
     </form>
-
+    <!--Para el botón de buscar-->
+    <form action="anuncios.php" class="paginado" method="POST">
+        <fieldset>
+            <label style="color: white;" for="nombre">Buscar:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Buscar Propiedad">
+            <input type="submit" value="Buscar Propiedad" class="boton-verde">
+        </fieldset>
+    </form>
+    <!--En caso de buscar aparece por pantalla lo introducido para buscar-->
+    <?php
+        if (isset($busq)){
+            echo '<form class="paginado"><fieldset><h1>Buscando por: '.$busq.'<a href="anuncios.php" class="boton-verde">X</a></fieldset></form>';
+        }
+    ?>
     <main class="contenedor seccion">
 
     <?php
@@ -85,7 +111,7 @@
                         </li>
                     </ul>
 
-                    <a href="anuncio.php" class="boton-amarillo-block">
+                    <a href="anuncio.php/?id=<?php echo $fila['id']?>" class="boton-amarillo-block">
                         Ver Propiedad
                     </a>
                 </div><!--.contenido-anuncio-->
@@ -94,7 +120,7 @@
         </div> <!--.contenedor-anuncios-->
         
         <div class="alinear-derecha">
-            <a href="anuncios.php?anuncios=200" class="boton-verde">Ver Todas</a>
+            <a href="anuncios.php" class="boton-verde">Ver Todas</a>
         </div>
         <!--Para moverse entre las páginas-->
         <div class="pagComplete">
