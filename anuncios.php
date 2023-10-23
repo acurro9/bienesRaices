@@ -161,9 +161,6 @@
 
     <main class="contenedor seccion">
 
-    <?php
-    
-    ?>
     <div class="contenedor-anuncios"> <?php
     while ($fila=mysqli_fetch_assoc($datos)){?>
 
