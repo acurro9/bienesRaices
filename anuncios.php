@@ -7,7 +7,8 @@
     incluirTemplate('header');    
 
     //Se realiza la conexión a la base de datos
-    $db= mysqli_connect('localhost', 'root', '', 'bienesraices_crud');
+    require './includes/config/database.php';
+    $db=conectarDB();
     //Se realiza la consulta para tener el nº total de propiedades
     $consulta="SELECT count(*) as contador FROM propiedades;";
     $datos=mysqli_query($db,$consulta);
