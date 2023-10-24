@@ -3,6 +3,7 @@
 
 .desc{
     max-width: 380px;
+    font-size: 1px;
 }
 .paginado{
     display: flex;
@@ -22,6 +23,13 @@
     flex-direction: row;
     max-width: 100%;
     margin: 0 30px;
+}
+.prop legend{
+    color: white;
+    font-size: 20px;
+}
+.prop span{
+    color: #71B100;
 }
 .busqueda{
     display: flex;
@@ -44,4 +52,16 @@
     color: white;
     background-color: #71B100;
     border: none;
+}
+.mostrar{
+    line-height: 20px;
+}
+.botones{
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+.botones button{
+    margin-top: 5px;
+    background-color: red;
 }

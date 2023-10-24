@@ -13,6 +13,7 @@
         $db=conectarDB();
         $consult="SELECT imagen, titulo, precio, habitaciones, wc, estacionamiento, descripcion FROM propiedades where id=$id;";
         $datos=mysqli_query($db,$consult);
+        $errores=[];
     
         while ($fila=mysqli_fetch_row($datos)){
                 $imagen=$fila[0]; 
@@ -32,32 +33,63 @@
             $wc=mysqli_real_escape_string($db,$_POST['wc']);
             $estacionamiento=mysqli_real_escape_string($db,$_POST['estacionamiento']);
             $img=$_FILES['img'];
-            
-            //Se borra la imagen vieja y se sube la nueva
-            if($img['name']){
-                $carpetaImagenes='../../imagenes/';
-                $ruta='../../imagenes/'.$imagen;
-                unlink($ruta);
-                $nombreImagen=md5(uniqid(rand(),true)).".jpg";
-                move_uploaded_file($img['tmp_name'], $carpetaImagenes.$nombreImagen);
-            } else{
-                $nombreImagen=$imagen;
+            if(!$titulo){
+                $errores[]="Debes añadir un título";
+            }
+            if(!$precio){
+                $errores[]="Debes añadir un precio";
+            }
+            if(!$habitaciones){
+                $errores[]="Debes añadir un habitaciones";
+            }
+            if(!$wc){
+                $errores[]="Debes añadir un wc";
+            }
+            if(!$estacionamiento){
+                $errores[]="Debes añadir un estacionamiento";
+            }
+            if(strlen($descripcion)<50){
+                $errores[]="Debes añadir un descripcion de mínimo 50 caracteres";
+            }
+    
+            $medida=1024;
+            if (($img['size']/1024)>$medida){
+                $errores[]="Reduzca el tamaño de la imagen, debe ser menor a". $medida."Kb.";
             }
             
-            $query="UPDATE propiedades set titulo='$titulo', precio=$precio, descripcion='$descripcion', 
-                        habitaciones=$habitaciones, wc=$wc, estacionamiento='$estacionamiento', imagen='$nombreImagen' where id=$id;";
-                $resultado=mysqli_query($db,$query);
-                if ($resultado) {
-                    header('Location:/admin?resultado=2');
-                    
+            if(empty($errores)){
+            
+            //Se borra la imagen vieja y se sube la nueva
+                if($img['name']){
+                    $carpetaImagenes='../../imagenes/';
+                    $ruta='../../imagenes/'.$imagen;
+                    unlink($ruta);
+                    $nombreImagen=md5(uniqid(rand(),true)).".jpg";
+                    move_uploaded_file($img['tmp_name'], $carpetaImagenes.$nombreImagen);
+                } else{
+                    $nombreImagen=$imagen;
                 }
-    
+                
+                $query="UPDATE propiedades set titulo='$titulo', precio=$precio, descripcion='$descripcion', 
+                            habitaciones=$habitaciones, wc=$wc, estacionamiento='$estacionamiento', imagen='$nombreImagen' where id=$id;";
+                    $resultado=mysqli_query($db,$query);
+                    if ($resultado) {
+                        header('Location:/admin?resultado=2');
+                        
+                    }
+                }
         }
     }
         ?>
         
         <main class="contenedor section">
             <h1>Actualizar</h1>
+            <?php foreach($errores as $error){ ?>
+                <div class="alerta error">
+                <?php echo $error; ?>
+            </div>
+
+    <?php } ?>
             <form class="formulario" method="POST" action="/admin/propiedades/actualizar.php/?id=<?php echo $id?>" enctype="multipart/form-data">
         
                 <fieldset>

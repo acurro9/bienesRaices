@@ -13,7 +13,12 @@
     $datos=mysqli_query($db,$consulta);
     $data=mysqli_fetch_assoc($datos);
     $cantPropiedades=$data['contador'];
+    $cantPropiedades2=$data['contador'];
     //Por defecto los productos por pagina son 6 y la página es 1, si en la url está presente cambia
+    $orden = 0;
+    if (isset($_GET["orden"])) {
+        $orden = $_GET["orden"];
+    }
     $ppp = 6;
     if (isset($_GET["anuncios"])) {
         $ppp = $_GET["anuncios"];
@@ -22,22 +27,51 @@
     if (isset($_GET["pagina"])) {
         $pagina = $_GET["pagina"];
     }
+    $nombre="";
+    if (isset($_GET["titulo"])){
+        $nombre = $_GET["titulo"];
+    }
+    $precioMin="";
+    if (isset($_GET["preciomin"])){
+        $precioMin = $_GET["preciomin"];
+    }
+    $precioMax="";
+    if (isset($_GET["preciomax"])){
+        $precioMax = $_GET["preciomax"];
+    }
+    $descripcion="";
+    if (isset($_GET["descripcion"])){
+        $descripcion = $_GET["descripcion"];
+    }
+    $habitaciones="";
+    if (isset($_GET["habitaciones"])){
+        $habitaciones = $_GET["habitaciones"];
+    }
+    $wc="";
+    if (isset($_GET["wc"])){
+        $wc = $_GET["wc"];
+    }
+    $estacionamiento="";
+    if (isset($_GET["estacionamiento"])){
+        $estacionamiento = $_GET["estacionamiento"];
+    }
+    
     //Se coge el total de páginas redondeando hacia arriba
     $totalPaginas=ceil($cantPropiedades/$ppp);
     //Se calculan el limit y el offset
     $offset=($pagina-1)*$ppp;
     $limit= $ppp;
     //Se realiza la consulta a la base de datos
-    $consult="SELECT * FROM propiedades limit $limit offset $offset;";
+    if($orden==1){
+        $consult="SELECT * FROM propiedades order by precio asc limit $limit offset $offset;";
+    } else if($orden==2){
+        $consult="SELECT * FROM propiedades order by precio desc limit $limit offset $offset;";
+    } else if($orden==3){
+        $consult="SELECT * FROM propiedades order by habitaciones asc limit $limit offset $offset;";
+    } else{
+        $consult="SELECT * FROM propiedades limit $limit offset $offset;";
+    }
     $datos=mysqli_query($db,$consult);
-
-        $nombre="";
-        $precioMin="";
-        $precioMax="";
-        $descripcion="";
-        $habitaciones="";
-        $wc="";
-        $estacionamiento="";
 
     if ($_SERVER['REQUEST_METHOD']==="POST"){
 
@@ -48,15 +82,6 @@
         $habitaciones= mysqli_real_escape_string($db,$_POST['habitaciones']);
         $wc=mysqli_real_escape_string($db,$_POST['wc']);
         $estacionamiento=mysqli_real_escape_string($db,$_POST['estacionamiento']);
-
-        //Así se muestran todas las propiedades que contengan esa palabra en una sola página
-        // $busqueda="SELECT * from propiedades where titulo like '%$nombre%';";
-        // $datos=mysqli_query($db,$busqueda);
-        // $totalPaginas=1;
-        
-        //Así se muestran la cantidad de propiedades ya establecida (6)
-        // $busqueda="SELECT * from propiedades where titulo like '%$nombre%' limit $limit offset $offset;";
-        // $datos=mysqli_query($db,$busqueda);
 
         if(!$nombre){
             $nombre='%';
@@ -79,20 +104,35 @@
         if(!$estacionamiento){
             $estacionamiento=0;
         }
-        $busqueda="SELECT * from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento limit $limit offset $offset;";
+
+        if($orden==1){
+            $busqueda="SELECT * from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento order by precio asc";
+            $busqCantidad="SELECT count(*) as contador2 from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento order by precio asc";
+        } else if($orden==2){
+            $busqueda="SELECT * from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento order by precio desc;";
+            $busqCantidad="SELECT count(*) as contador2 from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento order by precio desc;";
+        } else if($orden==3){
+            $busqueda="SELECT * from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento order by habitaciones asc;";
+            $busqCantidad="SELECT count(*) as contador2 from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento order by habitaciones asc;";
+        } else{
+            $busqueda="SELECT * from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento;";
+            $busqCantidad="SELECT count(*) as contador2 from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento;";
+        }
         $datos=mysqli_query($db,$busqueda);
 
-        $busqCantidad="SELECT count(*) as contador2 from propiedades where titulo like '%$nombre%' and precio between $precioMin and $precioMax and descripcion like '%$descripcion%' and habitaciones >= $habitaciones and wc >= $wc and estacionamiento >= $estacionamiento limit $limit offset $offset;";
+        
         $datos2=mysqli_query($db,$busqCantidad);
         if($datos && $datos2){
             $data=mysqli_fetch_assoc($datos2);
             $cantPropiedades=$data['contador2'];
-            $totalPaginas=ceil($cantPropiedades/$ppp);
+            $totalPaginas=1;
         }
     }
     function guardarValor($variable){
-        if ($variable=='%' || $variable==0 || $variable==1000000000000000000){
+        if($variable==0 || $variable==1000000000000000000){
             return false;
+        } else if (is_string($variable) && $variable != '%' && $variable!=""){
+            return true;
         } else{
             return true;
         }
@@ -101,45 +141,75 @@
     <link rel="stylesheet" href="build/css/app.css">
 
     <div class="prop">
-         
         <!--Para la busqueda-->
-        <form action="anuncios.php" class="busqueda" method="POST">
+        <form action="anuncios.php?orden=<?php echo $orden;?>" class="busqueda" method="POST">
             <fieldset class="busqueda">
-
+                <legend>Buscar:</legend>
                 <div class="buscar">
-                    <label style="color: white;" for="nombre">Buscar:</label>
-                    <input type="text" id="nombre" name="nombre" placeholder="Titulo" value="<?php echo guardarValor($nombre)?$nombre:'';?>">
+                    <label style="color: white;" for="nombre">Título: <?php echo guardarValor($nombre)?"<span>".$nombre."</span>":'';?></label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Titulo">
                 </div>
 
                 <div class="buscar">
-                    <label for="precio">Precio: </label>
+                    <div class="mostrar">
+                        <label for="precio">Precio: 
+                            <?php echo guardarValor($precioMin)?"<br><span> Min: ".$precioMin."</span>":'';?>
+                            <?php echo guardarValor($precioMax)?"<br><span> Max: ".$precioMax."</span>":'';?>
+                        </label>
+                    </div>
                     <div class="diferenciaPrecio">
-                        <input type="number" id="preciomin" placeholder="Min. Precio" name="preciomin" value="<?php echo guardarValor($precioMin)?$precioMin:'';?>">
-                        <input type="number" id="preciomax" placeholder="Max. Precio" name="preciomax" value="<?php echo guardarValor($precioMax)?$precioMax:'';?>">
+                        <input type="number" id="preciomin" placeholder="Min. Precio" name="preciomin">
+                        <input type="number" id="preciomax" placeholder="Max. Precio" name="preciomax">
                     </div>
                 </div>
                 <div class="buscar">
-                    <label for="habitaciones">Habitaciones: </label>
-                    <input type="number" id="habitaciones" placeholder="Min. Habitaciones" name="habitaciones" value="<?php echo guardarValor($habitaciones)?$habitaciones:'';?>">
+                    <label for="habitaciones">Min. Habitaciones:<?php echo guardarValor($habitaciones)?"<span>".$habitaciones."</span>":'';?> </label>
+                    
+                    <input type="number" id="habitaciones" placeholder="Min. Habitaciones" name="habitaciones">
                 </div>
 
                 <div class="buscar">
-                    <label for="wc">WC: </label>
-                    <input type="number" id="wc" placeholder="Min. WC" name="wc" value="<?php echo guardarValor($wc)?$wc:'';?>">
+                    <label for="wc">Min. WC: <?php echo guardarValor($wc)?"<span>".$wc."</span>":'';?></label>
+                    <input type="number" id="wc" placeholder="Min. WC" name="wc">
                 </div>
 
                 <div class="buscar">
-                    <label for="estacionamiento">Estacionamiento: </label>
-                    <input type="number" id="estacionamiento" placeholder="Min. Estacionamientos" name="estacionamiento" value="<?php echo guardarValor($estacionamiento)?$estacionamiento:'';?>">
+                    <label for="estacionamiento">Min. Estacionamiento: <?php echo guardarValor($estacionamiento)?"<span>".$estacionamiento."</span>":'';?></label>
+                    <input type="number" id="estacionamiento" placeholder="Min. Estacionamientos" name="estacionamiento">
                 </div>
 
                 <div class="">
-                    <label for="descripcion">Descripción: </label>
-                    <input type="text" id="descripcion" name="descripcion" placeholder="Descripción" value="<?php echo guardarValor($descripcion)?$descripcion:'';?>">
+                    <label for="descripcion">Descripción: <?php echo guardarValor($descripcion)?"<span>".$descripcion."</span>":'';?> </label>
+                    <input type="text" id="descripcion" name="descripcion" placeholder="Descripción">
                 </div>       
 
+                <div class="botones">
+                    <input type="submit" value="Buscar Propiedad" class="boton-buscar">
+                    <?php 
+                        if(guardarValor($nombre) || guardarValor($precioMin) || guardarValor($precioMax) || guardarValor($estacionamiento) || guardarValor($wc) || guardarValor($habitaciones) || guardarValor($descripcion)){
+                            echo '<button class="boton-buscar">
+                                <a href="./anuncios.php">Vaciar Campos</a>
+                                </button>';
+                        }
+                    ?>
+                    
+                </div>
+            </fieldset>
+        </form>
 
-                <input type="submit" value="Buscar Propiedad" class="boton-buscar">
+        <!--Se le pide el usuario el orden de las propiedades-->
+        <form action>
+            <fieldset>
+                <legend>Ordenar:</legend>
+                <select name="orden" id="orden">
+                    <option <?php echo $orden==0?'selected':''; ?> value="0"></option>
+                    <option <?php echo $orden==1?'selected':''; ?> value="1">Precio Asc</option>
+                    <option <?php echo $orden==2?'selected':''; ?> value="2">Precio Desc</option>
+                    <option <?php echo $orden==3?'selected':''; ?> value="3">Nº de Habitaciones</option>
+
+                </select>
+                <input type="submit" value="Ordenar" class="boton boton-verde">
+                
             </fieldset>
         </form>
 
@@ -201,19 +271,19 @@
         </div> <!--.contenedor-anuncios-->
         
         <div class="alinear-derecha">
-            <a href="anuncios.php" class="boton-verde">Ver Todas</a>
+            <a href="anuncios.php?anuncios=<?php echo $cantPropiedades2+1;?>" class="boton-verde">Ver Todas</a>
         </div>
         <!--Para moverse entre las páginas-->
         <div class="pagComplete">
             <?php if($pagina>1){?>
                 
-            <a class="pag" href="/anuncios.php?anuncios=<?php echo $ppp;?>&pagina=<?php echo $pagina-1?>"><</a><?php } ?>
+            <a class="pag" href="/anuncios.php?anuncios=<?php echo $ppp;?>&pagina=<?php echo $pagina-1?>&orden=<?php echo $orden?>"><</a><?php } ?>
             <?php for($i=0; $i<$totalPaginas; $i++){ ?>
-                <a class="pag" href="/anuncios.php?anuncios=<?php echo $ppp;?>&pagina=<?php echo $i+1;?>" <?php echo $pagina==$i+1?'style="color: #71B100; font-weight: 800;"':'';?>><?php echo $i+1;?></a>
+                <a class="pag" href="/anuncios.php?anuncios=<?php echo $ppp;?>&pagina=<?php echo $i+1;?>&orden=<?php echo $orden?>" <?php echo $pagina==$i+1?'style="color: #71B100; font-weight: 800;"':'';?>><?php echo $i+1;?></a>
                 <?php } 
                 if($pagina<$totalPaginas){
                     ?>
-            <a class="pag" href="/anuncios.php?anuncios=<?php echo $ppp;?>&pagina=<?php echo $pagina+1?>">></a>
+            <a class="pag" href="/anuncios.php?anuncios=<?php echo $ppp;?>&pagina=<?php echo $pagina+1?>&orden=<?php echo $orden?>">></a>
                     <?php } ?>
         </div>
 
