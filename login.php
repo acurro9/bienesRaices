@@ -64,17 +64,19 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 
 
 <form method="POST" class="formulario" >
+        <fieldset>
+            <legend>Email y Password</legend>
 
-         <fieldset>
-                <legend>Email y Password</legend>
+            <label for="email">E-mail</label>
+            <input type="email" name="email" placeholder="Tu Email" id="email" required>
 
-                 <label for="email">E-mail</label>
-                <input type="email" name="email" placeholder="Tu Email" id="email" required>
+            <label for="password">Password</label>
+            <input type="password" name="password" placeholder="Password" id="password" required>
 
-                <label for="password">Password</label>
-                <input type="password" name="password" placeholder="Password" id="password" required>
-
-               
-            </fieldset>
-            <input type="submit" value="Iniciar sesión" class="boton boton-verde">
+        </fieldset>
+        <input type="submit" value="Iniciar sesión" class="boton boton-verde">
 </form>
+
+<?php
+    incluirTemplate("footer");
+?>
