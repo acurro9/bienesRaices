@@ -2,6 +2,11 @@
     require '../../includes/config/database.php';
     require '../../includes/funciones.php';
     incluirTemplate('header');
+
+    $auth=estaAutenticado();
+    if(!$auth){
+        header('Location: /');
+    }
     
     $db=conectarDB();
     $consulta="SELECT * FROM vendedores;";

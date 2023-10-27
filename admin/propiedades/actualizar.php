@@ -5,6 +5,12 @@
     incluirTemplate('header');
     require '../../includes/config/database.php';
 
+
+    $auth=estaAutenticado();
+    if(!$auth){
+        header('Location: /');
+    }
+
     $id= filter_var($id, FILTER_VALIDATE_INT);
     if (!$id){
         header('Location: /admin');

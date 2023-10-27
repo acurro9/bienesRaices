@@ -5,6 +5,12 @@
 
     require '../includes/config/database.php';
     $db=conectarDB();
+
+    $auth=estaAutenticado();
+    if(!$auth){
+        header('Location: /');
+    }
+
     $consult="SELECT * FROM propiedades;";
     $datos=mysqli_query($db,$consult); 
     ?>
@@ -39,7 +45,6 @@
 }
 
 ?>
-<link rel="stylesheet" href="./styleTabla.css">
 <main class="contenedor seccion">
     <h1>Administrador</h1>
     <?php if (intval($resultado)===1){ ?>
@@ -76,7 +81,7 @@
                         <a href="/admin/propiedades/actualizar.php/?id=<?php echo $fila['id']?>" class="boton-amarillo-block">Actualizar propiedad</a>
                         <form action="<?php $_SERVER[ 'PHP_SELF' ]; ?>" method="post" onsubmit="return confirmEliminado()">
                             <input type="hidden" name="id" value=<?php echo $fila['id'];?>>
-                            <input type="submit" class="boton-rojo-block" value="Eliminar">
+                            <input type="submit" class="boton-rojo-block" value="Eliminar Propiedad">
                         </form>
                     </td>
                 </tr>
