@@ -39,7 +39,7 @@
             //echo $query;
             $resultado=mysqli_query($db,$query);
             if ($resultado) {
-                header('Location:/admin?resultado=4');
+                header('Location:/admin/indexVend.php/?resultado=1');
             }
 
         }
@@ -47,7 +47,7 @@
 ?>
 
 <main class="contenedor section">
-    <h1>Crear</h1>
+    <h1>Crear Vendedores</h1>
 
     <form class="formulario" method="POST" action="/admin/vendedores/crear.php" enctype="multipart/form-data">
         <fieldset>
@@ -65,7 +65,7 @@
         <input type="submit" value="Crear vendedor" class="boton boton-verde">
     </form>
 
-    <a href="/admin/index.php" class="boton boton-verde">Volver</a>
+    <a href="/admin/indexVend.php" class="boton boton-verde">Volver</a>
 </main>
 
 <?php
