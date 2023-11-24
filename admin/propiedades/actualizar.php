@@ -1,15 +1,13 @@
 <?php
     $id=$_GET['id'];
 
-    require '../../includes/funciones.php';
+    require '../../includes/app.php';
     incluirTemplate('header');
-    require '../../includes/config/database.php';
+    use App\Propiedad;
 
 
-    $auth=estaAutenticado();
-    if(!$auth){
-        header('Location: /');
-    }
+        // Proteger esta ruta.
+        estaAutenticado();
 
     $id= filter_var($id, FILTER_VALIDATE_INT);
     if (!$id){

@@ -1,9 +1,12 @@
 <?php 
     $resultado=$_GET['resultado'] ?? null;
-    require '../includes/funciones.php';
+    require '../includes/app.php';
     incluirTemplate('header');
+    use App\Propiedad;
 
-    require '../includes/config/database.php';
+    // Proteger esta ruta.
+    estaAutenticado();
+
     $db=conectarDB();
     $consult="SELECT * FROM vendedores;";
     $datos=mysqli_query($db,$consult);

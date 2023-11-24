@@ -1,14 +1,14 @@
+<!-- Crear viejo -->
 <?php
-    require '../../includes/config/database.php';
-    require '../../includes/funciones.php';
+    require '../../includes/app.php';
     incluirTemplate('header');
-
-    $auth=estaAutenticado();
-    if(!$auth){
-        header('Location: /');
-    }
+    use App\Propiedad;
+    
+    // Proteger esta ruta.
+    estaAutenticado();
     
     $db=conectarDB();
+    
     $consulta="SELECT * FROM vendedores;";
     $result=mysqli_query($db,$consulta);
 
@@ -38,31 +38,6 @@
         $imagen=$_FILES['imagen'];
         $creado=date('Y/m/d');
 
-        //Comprobación de los datos
-        if(!$titulo){
-            $errores[]="Debes añadir un título";
-        }
-        if(!$precio){
-            $errores[]="Debes añadir un precio";
-        }
-        if(!$habitaciones){
-            $errores[]="Debes añadir un habitaciones";
-        }
-        if(!$wc){
-            $errores[]="Debes añadir un wc";
-        }
-        if(!$estacionamiento){
-            $errores[]="Debes añadir un estacionamiento";
-        }
-        if(strlen($descripcion)<50){
-            $errores[]="Debes añadir un descripcion de mínimo 50 caracteres";
-        }
-        if(!$vendedores_id){
-            $errores[]="Debes añadir un vendedor";
-        }
-        if (!$imagen['name']) {
-            $errores[]="La imagen es obligatoria";
-        }
 
         $medida=1024;
         if (($imagen['size']/1024)>$medida){
@@ -70,7 +45,10 @@
         }
         
         if(empty($errores)){
+            $propiedad=new Propiedad($_POST);
 
+            
+            $propiedad->crear();
             //Se crea la carpeta para las imagenes si no existe
             $carpetaImagenes='../../imagenes/';
             if (!is_dir($carpetaImagenes)){
@@ -78,16 +56,16 @@
             }
             $nombreImagen=md5(uniqid(rand(),true)).".jpg";
 
-            $query="INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedores_id)   
-            VALUES ('$titulo', '$precio', '$nombreImagen', '$descripcion','$habitaciones','$wc','$estacionamiento', '$creado', '$vendedores_id')";
-            //echo $query;
-            $resultado=mysqli_query($db,$query);
-            if ($resultado) {
-                header('Location:/admin/index-php/?resultado=1');
                 move_uploaded_file($imagen['tmp_name'], $carpetaImagenes.$nombreImagen);
-            }
 
         }
+
+        // if($_SERVER['REQUEST_METHOD']==='POST'){
+        //     $propiedad=new Propiedad($_POST);
+        //     debuguear($propiedad);
+            
+        //     $propiedad->crear();
+        // }
     }
 
 
@@ -150,3 +128,86 @@
 <?php
     incluirTemplate('footer');
 ?>
+
+<!-- Crear nuevo -->
+<?php 
+    // require '../../includes/app.php';
+    // use App\Propiedad;
+    // use App\Vendedor;
+
+    // estaAutenticado();
+
+    // // Importar Intervention Image
+    // use Intervention\Image\ImageManagerStatic as Image;
+
+    // // Crear el objeto
+    // $propiedad = new Propiedad;
+
+    // // Consultar para obtener los vendedores
+    // $vendedores = Vendedor::all();
+
+    // // Arreglo con mensajes de errores
+    // $errores = Propiedad::getErrores();
+
+    // // Ejecutar el código después de que el usuario envia el formulario
+    // if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    //     /** Crea una nueva instancia */
+    //     $propiedad = new Propiedad($_POST['propiedad']);
+
+    //     // Generar un nombre único
+    //     $nombreImagen = md5( uniqid( rand(), true ) ) . ".jpg";
+
+    //     // Setear la imagen
+    //     // Realiza un resize a la imagen con intervention
+    //     if($_FILES['propiedad']['tmp_name']['imagen']) {
+    //         $image = Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800,600);
+    //         $propiedad->setImagen($nombreImagen);
+    //     }
+        
+    //     // Validar
+    //     $errores = $propiedad->validar();
+
+    //     if(empty($errores)) {
+        
+    //         // Crear la carpeta para subir imagenes
+    //         if(!is_dir(CARPETA_IMAGENES)) {
+    //             mkdir(CARPETA_IMAGENES);
+    //         }
+
+    //         // Guarda la imagen en el servidor
+    //         $image->save(CARPETA_IMAGENES . $nombreImagen);
+
+    //         // Guarda en la base de datos
+    //         $propiedad->guardar();
+    //     }
+    // }
+
+    // incluirTemplate('header');
+?>
+
+    <!-- <main class="contenedor seccion">
+        <h1>Crear</h1>
+
+        
+
+        <a href="/admin" class="boton boton-verde">Volver</a>
+
+        <?php //foreach($errores as $error): ?>
+        <div class="alerta error">
+            <?php //echo $error; ?>
+        </div>
+        <?php //endforeach; ?>
+
+        <form class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
+            <?php //include '../../includes/templates/formulario_propiedades.php'; ?>
+
+            <input type="submit" value="Crear Propiedad" class="boton boton-verde">
+        </form>
+        
+    </main> -->
+
+<?php 
+    // incluirTemplate('footer');
+?> 
+

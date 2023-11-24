@@ -1,9 +1,9 @@
 <?php
     $id=$_GET['id'];
 
-    require '../../includes/funciones.php';
+    require '../../includes/app.php';
     incluirTemplate('header');
-    require '../../includes/config/database.php';
+    use App\Propiedad;
     $db=conectarDB();
     $consult="SELECT nombre, apellidos, telefono FROM vendedores where id=$id;";
     $datos=mysqli_query($db,$consult);

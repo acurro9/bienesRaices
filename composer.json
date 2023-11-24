@@ -1,0 +1,17 @@
+{
+  "name": "aaron/bienesraices_crud",
+  "description": "practica",
+  "autoload": {
+    "psr-4": {
+      "Aaron\\BienesraicesCrud\\": "src/",
+      "App\\": "./clases"
+    }
+  },
+  "authors": [
+    {
+      "name": "acurro9",
+      "email": "asbarxas.aaroncurro@gmail.com"
+    }
+  ],
+  "require": {}
+}

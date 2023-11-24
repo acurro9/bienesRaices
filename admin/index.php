@@ -1,15 +1,13 @@
 <?php 
     $resultado=$_GET['resultado'] ?? null;
-    require '../includes/funciones.php';
+    require '../includes/app.php';
     incluirTemplate('header');
+    use App\Propiedad;
 
-    require '../includes/config/database.php';
     $db=conectarDB();
 
-    $auth=estaAutenticado();
-    if(!$auth){
-        header('Location: /');
-    }
+    // Proteger esta ruta.
+    estaAutenticado();
 
     $consult="SELECT * FROM propiedades;";
     $datos=mysqli_query($db,$consult); 
@@ -56,7 +54,7 @@
     <?php } ?>
 
     <a href="/admin/propiedades/crear.php" class="boton boton-verde crear">Nueva propiedad</a>
-    <a href="/admin/vendedores/crear.php" class="boton boton-verde crear">Nuevo Vendedor</a>
+    <a href="/admin/indexVend.php" class="boton boton-verde crear">Vendedores</a>
 
     <table class="propiedades">
         <thead>

@@ -9,9 +9,8 @@
 <body>
     
     <?php
-    include './includes/funciones.php';
+    require './includes/app.php';
     incluirTemplate('header', true);
-    require './includes/config/database.php';
     $db=conectarDB();
     $consult="SELECT * FROM propiedades limit 3;";
     $datos=mysqli_query($db,$consult);
@@ -150,7 +149,7 @@
         </section>
     </div>
     <?php 
-        include './includes/templates/footer.php';
+        incluirTemplate('footer');
     ?>
     <script src="build/js/bundle.min.js"></script>
 </body>

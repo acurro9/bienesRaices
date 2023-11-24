@@ -9,7 +9,7 @@
 <body>
     
     <?php
-    include './includes/funciones.php';
+    require './includes/app.php';
     incluirTemplate('header');
     ?>  
 
@@ -60,7 +60,7 @@
     </section>
 
     <?php 
-        include './includes/templates/footer.php';
+        incluirTemplate('footer');
     ?>
     <script src="build/js/bundle.min.js"></script>
 </body>

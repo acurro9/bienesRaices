@@ -1,9 +1,9 @@
 <body>
 <?php
     $id=$_GET['id'];
-    require './includes/funciones.php';
+    require './includes/app.php';
     incluirTemplate('header');
-    require './includes/config/database.php';
+    
 
     $id= filter_var($id, FILTER_VALIDATE_INT);
     if (!$id){
