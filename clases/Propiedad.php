@@ -6,8 +6,9 @@ class Propiedad extends ActiveRecord {
 
     // Base DE DATOS
     protected static $tabla = 'propiedades';
-    protected static $columnasDB = ['id', 'titulo', 'precio', 'imagen', 'descripcion', 'habitaciones', 'wc', 'estacionamiento', 'creado', 'vendedorId'];
+    protected static $columnasDB = ['id', 'titulo', 'precio', 'imagen', 'descripcion', 'habitaciones', 'wc', 'estacionamiento', 'creado', 'vendedores_id'];
     
+    protected static $errores=[];
     protected static $db;
     public $id;
     public $titulo;
@@ -18,7 +19,7 @@ class Propiedad extends ActiveRecord {
     public $wc;
     public $estacionamiento;
     public $creado;
-    public $vendedorId;
+    public $vendedores_id;
 
     public function __construct($args = [])
     {
@@ -31,7 +32,7 @@ class Propiedad extends ActiveRecord {
         $this->wc = $args['wc'] ?? '';
         $this->estacionamiento = $args['estacionamiento'] ?? '';
         $this->creado = date('Y/m/d');
-        $this->vendedorId = $args['vendedorId'] ?? '';
+        $this->vendedores_id = $args['vendedores_id'] ?? '';
     }
     public static function setDB($database){
         self::$db = $database;
@@ -63,7 +64,7 @@ class Propiedad extends ActiveRecord {
             self::$errores[] = 'El Número de lugares de Estacionamiento es obligatorio';
         }
         
-        if(!$this->vendedorId) {
+        if(!$this->vendedores_id) {
             self::$errores[] = 'Elige un vendedor';
         }
 
@@ -73,24 +74,117 @@ class Propiedad extends ActiveRecord {
 
         return self::$errores;
     }
-
+    public function guardar() {
+        if(!is_null($this->id)) {
+            // actualizar
+            $resultado=$this->actualizar();
+        } else {
+            // Creando un nuevo registro
+            $resultado=$this->crear();
+        }
+        return $resultado;
+    }
     public function crear(){
-        $query="INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedores_id)   
-            VALUES ('$this->titulo', '$this->precio', '$this->imagen', '$this->descripcion','$this->habitaciones','$this->wc','$this->estacionamiento', '$this->creado', '1')";
+        //Sanitizar los datos
+        $atributos=$this->sanitizarAtributos();
+        //insertar en la base de datos
+       
 
-        $resultado=mysqli_query($db, $query) or die(mysqli_error($db));
+        $query = "INSERT INTO propiedades (";
+        $query.=join(',', array_keys($atributos));
+        $query.=") VALUES ('";
+        $query.=join("', '",array_values($atributos));
+        $query.= " ' ) ";
+        // debuguear($query);
+         $resultado=self::$db->query($query);
+         return $resultado;
+       
+    }
+    //identifica y une los atributos de la bd con sus valores en forma de vector
+    public function atributos(){
+        $atributos=[];
+        foreach(self::$columnasDB as $columna){
+            if ($columna==='id') continue;
+            $atributos[$columna]=$this->$columna;
+        }
+        return $atributos;
+    }
+    public function sanitizarAtributos(){
+        $atributos=$this->atributos();
+        $sanitizado=[];
+        //este vector se recorre como asociativo
+        foreach ($atributos as $key=>$value){
+            $sanitizado[$key]= self::$db->escape_string($value);
+        }
+        
+        return $sanitizado;
+    }
+    //Validaciones 
+    public static function getErrores(){ return self::$errores; }
 
-        if ($resultado) {
-            header('Location:/admin/index-php/?resultado=1');
+    public function setImagen($imagen){
+        if ($imagen){
+            $this->imagen=$imagen;
+            
+        }
+
+    }
+    public static function all(){
+        $query="SELECT * FROM propiedades;";
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+
+    public static function consultarSQL($query){
+        //Consultar la base de datos
+        $resultado=self::$db->query($query);
+     
+
+        //iterar los resultados
+        $array=[];
+        while ($registro=$resultado->fetch_assoc()){
+            $array[]=self::crearObjeto($registro);
+
+        }
+        //liberar la memoria
+        $resultado ->free();
+        //devolver resultados
+        return $array;
+    }
+    protected static function crearObjeto($registro){
+            $objeto=new self;
+            
+            foreach ($registro as $key =>$value){
+        
+                if (property_exists($objeto,$key)){
+                    $objeto->$key=$value;
+                }
+            }
+            return $objeto;
+    }
+    //No funciona
+    public function eliminar($id){
+        $query = "DELETE FROM " . static::$tabla . " WHERE id = ${id};";
+        $resultado = self::$db->query($query);
+
+        return $resultado ;
+        // debuguear($query);
+    }
+    public function borrarImagen(){
+
+        // Comprobar si existe el archivo
+        $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
+        if($existeArchivo) {
+            unlink(CARPETA_IMAGENES . $this->imagen);
+        
         }
     }
-    public function sanitizar(){
-        $titulo=$_POST['titulo'];
-        $precio=$_POST['precio'];
-        $descripcion=$_POST['descripcion'];
-        $habitaciones=$_POST['habitaciones'];
-        $wc=$_POST['wc'];
-        $estacionamiento=$_POST['estacionamiento'];
-        $vendedorId=$_POST['vendedor'];
+     // Busca un registro por su id
+     public static function find($id) {
+        $query = "SELECT * FROM " . static::$tabla  ." WHERE id = ${id};";
+
+        $resultado = self::consultarSQL($query);
+
+        return array_shift( $resultado ) ;
     }
 }

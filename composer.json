@@ -13,5 +13,7 @@
       "email": "asbarxas.aaroncurro@gmail.com"
     }
   ],
-  "require": {}
+  "require": {
+    "intervention/image": "^2.7"
+  }
 }

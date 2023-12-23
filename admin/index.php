@@ -1,46 +1,29 @@
 <?php 
     $resultado=$_GET['resultado'] ?? null;
-    require '../includes/app.php';
-    incluirTemplate('header');
-    use App\Propiedad;
 
-    $db=conectarDB();
+    require '../includes/app.php';
+    use App\Propiedad;
+    
+    incluirTemplate('header');
+
+    $propiedades=Propiedad::all();
 
     // Proteger esta ruta.
     estaAutenticado();
 
-    $consult="SELECT * FROM propiedades;";
-    $datos=mysqli_query($db,$consult); 
-    ?>
-    <script type="text/javascript">
-        function confirmEliminado() {
-            return window.confirm( '¿Seguro que quiere borrar la propiedad?' );
-        }
-    </script>
-<?php
-
     if ($_SERVER['REQUEST_METHOD']==='POST'){
-        $id=$_POST['id'];
-
-        //validamos que el id sea un entero
-        $id=filter_var($id, FILTER_VALIDATE_INT);
-        if ($id){
-            //eliminar la imagen
-            $query="SELECT imagen FROM propiedades WHERE id=${id}";
-            $resultado= mysqli_query($db,$query);
-            $fila=mysqli_fetch_assoc($resultado);
-          
-            unlink('../imagenes/'.$fila['imagen']);
-  
-            //eliminar la propiedad
-            $query="DELETE FROM propiedades  WHERE id=${id}";
-            $resultado=mysqli_query($db,$query);
+        $id=$_POST['id_eliminar'];
+        $propiedadD=new Propiedad($_POST);
+        // echo "<pre>";
+        // var_dump($propiedadD);
+        // var_dump($id);
+        // echo "</pre>";
+        $resultado = $propiedadD->eliminar($id);
             //pasamos un resultado para poder mostrar un mensaje.
             if ($resultado){
                 header('location: /admin?resultado=3');
-            }
         }
-}
+    }
 
 ?>
 <main class="contenedor seccion">
@@ -67,25 +50,34 @@
             </tr>
         </thead>
         <tbody>
-            <?php
-            while ($fila=mysqli_fetch_assoc($datos)){?>
+            <?php foreach ($propiedades as $propiedad):?>
                 <tr>
-                    
-                    <td><?php echo $fila['id'] ?></td>
-                    <td><?php echo $fila['titulo'] ?></td>
-                    <td><img src="../imagenes/<?php echo $fila['imagen'] ?>" alt="" class="imagen-tabla"></td>
-                    <td><?php echo $fila['precio'] ?></td>
+                    <td><?php echo $propiedad->id; ?></td>
+                    <td><?php echo $propiedad->titulo; ?></td>
                     <td>
-                        <a href="/admin/propiedades/actualizar.php/?id=<?php echo $fila['id']?>" class="boton-amarillo-block">Actualizar propiedad</a>
-                        <form action="<?php $_SERVER[ 'PHP_SELF' ]; ?>" method="post" onsubmit="return confirmEliminado()">
-                            <input type="hidden" name="id" value=<?php echo $fila['id'];?>>
-                            <input type="submit" class="boton-rojo-block" value="Eliminar Propiedad">
-                        </form>
+                        <img src="/imagenes/<?php echo $propiedad->imagen; ?>" width="100" class="imagen-tabla">
+                    </td>
+                    <td>$ <?php echo $propiedad->precio; ?></td>
+                    <td>
+                    <form method="POST" onsubmit="return confirmEliminado()">
+                        <input type="hidden" name="id_eliminar" value="<?php echo s($propiedad->id); ?>">
+                        <input type="submit" class="boton boton-rojo-block" value="Borrar">
+                    </form>
+                
+                        <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad->id; ?>" class="boton boton-verde">Actualizar</a>
                     </td>
                 </tr>
-            <?php } ?>
+                
+                <?php endforeach; ?>
         </tbody>       
     </table>
 </main>   
-</main>   
+<script type="text/javascript">
+        function confirmEliminado() {
+            return window.confirm( '¿Seguro que quiere borrar la propiedad?' );
+        }
+    </script>
+<?php 
+    incluirTemplate('footer');
+?>
 

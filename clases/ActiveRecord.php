@@ -40,7 +40,7 @@ class ActiveRecord {
     public static function all() {
         $query = "SELECT * FROM " . static::$tabla;
 
-        $resultado = self::consultarSQL($query);
+        $resultado = static::consultarSQL($query);
 
         return $resultado;
     }
@@ -49,7 +49,7 @@ class ActiveRecord {
     public static function find($id) {
         $query = "SELECT * FROM " . static::$tabla  ." WHERE id = ${id}";
 
-        $resultado = self::consultarSQL($query);
+        $resultado = static::consultarSQL($query);
 
         return array_shift( $resultado ) ;
     }
@@ -67,7 +67,7 @@ class ActiveRecord {
         $query .= " ') ";
 
         // Resultado de la consulta
-        $resultado = self::$db->query($query);
+        $resultado = static::$db->query($query);
 
         // Mensaje de exito
         if($resultado) {
@@ -88,10 +88,10 @@ class ActiveRecord {
 
         $query = "UPDATE " . static::$tabla ." SET ";
         $query .=  join(', ', $valores );
-        $query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
+        $query .= " WHERE id = '" . static::$db->escape_string($this->id) . "' ";
         $query .= " LIMIT 1 "; 
 
-        $resultado = self::$db->query($query);
+        $resultado = static::$db->query($query);
 
         if($resultado) {
             // Redireccionar al usuario.
@@ -100,10 +100,10 @@ class ActiveRecord {
     }
 
     // Eliminar un registro
-    public function eliminar() {
+    public function eliminar($id) {
         // Eliminar el registro
-        $query = "DELETE FROM "  . static::$tabla . " WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
-        $resultado = self::$db->query($query);
+        $query = "DELETE FROM "  . static::$tabla . " WHERE id = ${id};";
+        $resultado = static::$db->query($query);
 
         if($resultado) {
             $this->borrarImagen();
@@ -113,7 +113,7 @@ class ActiveRecord {
 
     public static function consultarSQL($query) {
         // Consultar la base de datos
-        $resultado = self::$db->query($query);
+        $resultado = static::$db->query($query);
 
         // Iterar los resultados
         $array = [];
@@ -156,7 +156,7 @@ class ActiveRecord {
         $atributos = $this->atributos();
         $sanitizado = [];
         foreach($atributos as $key => $value ) {
-            $sanitizado[$key] = self::$db->escape_string($value);
+            $sanitizado[$key] = static::$db->escape_string($value);
         }
         return $sanitizado;
     }

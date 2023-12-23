@@ -6,4 +6,7 @@
 
     use App\Propiedad;
 
+    $db=conectarDb();
+    Propiedad::setDB($db);
+
 ?>
